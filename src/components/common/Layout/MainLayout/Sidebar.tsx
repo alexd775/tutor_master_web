@@ -30,7 +30,7 @@ const Sidebar = ({ open, onClose }: SidebarProps) => {
       onClose={onClose}
       variant="persistent"
       sx={{
-        width: 240,
+        width: 40,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
           width: 240,
@@ -42,10 +42,16 @@ const Sidebar = ({ open, onClose }: SidebarProps) => {
             ? 'linear-gradient(180deg, #1a1c23 0%, #111827 100%)'
             : 'linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%)',
           borderRight: `1px solid ${theme.palette.divider}`,
+          overflowX: 'hidden',
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
         },
       }}
     >
-      <Box sx={{ overflow: 'auto', py: 2 }}>
+      <Box sx={{ py: 1 }}>
         <List>
           {menuItems.map((item) => (
             <ListItem

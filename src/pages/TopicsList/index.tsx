@@ -1,4 +1,4 @@
-import { Grid, Typography, Box, CircularProgress } from '@mui/material';
+import { Grid, Typography, Box, CircularProgress, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTopics } from '../../hooks/topics';
 import TopicCard from '../../components/common/Card/TopicCard';
@@ -6,6 +6,7 @@ import TopicCard from '../../components/common/Card/TopicCard';
 const TopicsList = () => {
   const navigate = useNavigate();
   const { data: topics, isLoading, error } = useTopics();
+  const theme = useTheme();
 
   if (isLoading) {
     return (
@@ -24,8 +25,11 @@ const TopicsList = () => {
   }
 
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{
+      minHeight: '100vh',
+      bgcolor: theme.palette.mode === 'dark' ? '#0f172a' : '#f3f4f6',
+    }}>
+      <Typography variant="h4" gutterBottom color="text.primary">
         Available Topics
       </Typography>
       <Grid container spacing={3}>

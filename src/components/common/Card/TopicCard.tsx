@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography, Box, Chip } from '@mui/material';
+import { Card, CardContent, Typography, Box, Chip, useTheme } from '@mui/material';
 import { BookOpen, Users, BarChart2 } from 'lucide-react';
 import { TopicResponse } from '../../../types/topic';
 
@@ -8,16 +8,24 @@ interface TopicCardProps {
 }
 
 const TopicCard = ({ topic, onClick }: TopicCardProps) => {
+  const theme = useTheme();
+
   return (
-    <Card 
+    <Card
       onClick={onClick}
-      sx={{ 
+      sx={{
         cursor: 'pointer',
-        '&:hover': { transform: 'translateY(-2px)', transition: 'transform 0.2s' }
+        background: theme.palette.mode === 'dark'
+          ? 'linear-gradient(135deg, #1f2937 0%, #111827 100%)'
+          : 'linear-gradient(135deg, white 0%, #f8fafc 100%)',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          transition: 'transform 0.2s'
+        }
       }}
     >
       <CardContent>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom color="text.primary">
           {topic.title}
         </Typography>
         {topic.description && (
@@ -26,7 +34,7 @@ const TopicCard = ({ topic, onClick }: TopicCardProps) => {
           </Typography>
         )}
         <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-          <Chip 
+          <Chip
             size="small"
             label={`Level ${topic.difficulty_level}`}
             color="primary"
@@ -36,6 +44,10 @@ const TopicCard = ({ topic, onClick }: TopicCardProps) => {
               size="small"
               label={`${topic.subtopic_count} subtopics`}
               variant="outlined"
+              sx={{
+                borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.2)' : undefined,
+                color: theme.palette.text.secondary
+              }}
             />
           )}
         </Box>

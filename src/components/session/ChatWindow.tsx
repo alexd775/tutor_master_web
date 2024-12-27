@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { MessageRole } from '../../types/auth';
 
 interface Message {
@@ -12,15 +12,19 @@ interface ChatWindowProps {
 }
 
 const ChatWindow = ({ messages }: ChatWindowProps) => {
+  const theme = useTheme();
+
   return (
-    <Paper 
-      sx={{ 
+    <Paper
+      sx={{
         height: '60vh',
         overflow: 'auto',
         p: 2,
-        bgcolor: '#ffffff',
+        bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
         borderRadius: 2,
-        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        boxShadow: theme.palette.mode === 'dark'
+          ? '0 4px 6px -1px rgba(0, 0, 0, 0.2)'
+          : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
       }}
     >
       {messages.map((message) => (
@@ -35,8 +39,12 @@ const ChatWindow = ({ messages }: ChatWindowProps) => {
         >
           <Typography
             sx={{
-              bgcolor: message.role === MessageRole.USER ? 'primary.main' : 'grey.100',
-              color: message.role === MessageRole.USER ? 'white' : 'text.primary',
+              bgcolor: message.role === MessageRole.USER
+                ? 'primary.main'
+                : theme.palette.mode === 'dark' ? '#374151' : 'grey.100',
+              color: message.role === MessageRole.USER
+                ? 'white'
+                : theme.palette.text.primary,
               p: 2,
               borderRadius: 2,
             }}

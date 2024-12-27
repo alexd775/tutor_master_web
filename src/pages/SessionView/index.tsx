@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Container } from '@mui/material';
+import { Box, Container, useTheme } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import TopicInfo from '../../components/session/TopicInfo';
 import ChatWindow from '../../components/session/ChatWindow';
@@ -8,6 +8,7 @@ import { MessageRole } from '../../types/auth';
 
 const SessionView = () => {
   const { sessionId } = useParams();
+  const theme = useTheme();
   const [messages, setMessages] = useState<Array<{
     id: string;
     role: MessageRole;
@@ -28,8 +29,12 @@ const SessionView = () => {
   }, [sessionId]);
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ py: 2 }}>
+    <Box sx={{
+      minHeight: '100vh',
+      bgcolor: theme.palette.mode === 'dark' ? '#0f172a' : '#f8fafc',
+      py: 2,
+    }}>
+      <Container maxWidth="lg">
         <TopicInfo
           title="Introduction to Python"
           description="Learn the basics of Python programming language"
@@ -38,8 +43,8 @@ const SessionView = () => {
         />
         <ChatWindow messages={messages} />
         <MessageInput onSendMessage={handleSendMessage} />
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 
