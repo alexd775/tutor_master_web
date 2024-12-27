@@ -37,7 +37,7 @@ const TopicsList = () => {
           <Grid item xs={12} sm={6} md={4} key={topic.id}>
             <TopicCard
               topic={topic}
-              onClick={() => navigate(`/session/new?topicId=${topic.id}`)}
+              onClick={() => navigate(`/session/${topic.id}`)}
             />
           </Grid>
         ))}

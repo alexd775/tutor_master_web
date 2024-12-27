@@ -7,6 +7,7 @@ export interface TopicResponse {
   difficulty_level: number;
   parent_id?: string;
   engagement_score: number;
+  duration: number;
   created_at: string;
   updated_at: string;
   subtopic_count: number;
