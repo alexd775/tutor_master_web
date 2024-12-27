@@ -6,35 +6,68 @@ import ChatWindow from '../../components/session/ChatWindow';
 import MessageInput from '../../components/session/MessageInput';
 import SessionHeader from '../../components/session/SessionHeader';
 import FileList from '../../components/session/FileList';
-import { MessageRole } from '../../types/auth';
+import BackButton from '../../components/common/BackButton';
 import { useSessionData } from '../../hooks/useSession';
 import { useTopicFiles } from '../../hooks/useFiles';
+import { useChatHistory, useSendMessage } from '../../hooks/useChat';
+import { ChatMessage } from '../../types/chat';
 
 const SessionView = () => {
   const { sessionId } = useParams();
   const theme = useTheme();
-  const { session, topic, isLoading: isSessionLoading, error: sessionError } = useSessionData(sessionId || '');
-  const { data: filesData, isLoading: isFilesLoading } = useTopicFiles(sessionId || '');
-  const [messages, setMessages] = useState<Array<{
-    id: string;
-    role: MessageRole;
-    content: string;
-  }>>([]);
+  const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
+
+  const {
+    session,
+    topic,
+    isLoading: isSessionLoading,
+    error: sessionError
+  } = useSessionData(sessionId || '');
+
+  const {
+    data: filesData,
+    isLoading: isFilesLoading
+  } = useTopicFiles(sessionId || '');
+
+  const {
+    data: serverMessages = [],
+    isLoading: isMessagesLoading
+  } = useChatHistory(session?.id || '');
+
+  const { mutate: sendMessage, isPending: isSending } = useSendMessage(session?.id || '');
+
+  // Combine server messages with local optimistic updates
+  const allMessages = [...serverMessages, ...localMessages];
 
   const handleSendMessage = (content: string) => {
-    const newMessage = {
-      id: Date.now().toString(),
-      role: MessageRole.USER,
+    const optimisticMessage: ChatMessage = {
+      id: `temp-${Date.now()}`,
+      session_id: session?.id || '',
+      role: 'user',
       content,
+      created_at: new Date().toISOString(),
     };
-    setMessages((prev) => [...prev, newMessage]);
+
+    setLocalMessages(prev => [...prev, optimisticMessage]);
+
+    sendMessage(
+      { content },
+      {
+        onSuccess: () => {
+          setLocalMessages([]);
+        },
+        onError: () => {
+          setLocalMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+        },
+      }
+    );
   };
 
   if (!sessionId) {
     return <Navigate to="/topics" replace />;
   }
 
-  if (isSessionLoading || isFilesLoading) {
+  if (isSessionLoading || isFilesLoading || isMessagesLoading) {
     return (
       <Box
         sx={{
@@ -75,6 +108,9 @@ const SessionView = () => {
       py: 2,
     }}>
       <Container maxWidth="lg">
+        <Box sx={{ mb: 2 }}>
+          <BackButton to="/topics" toText='Topics' />
+        </Box>
         <SessionHeader session={session} />
         <TopicInfo
           title={topic.title}
@@ -83,8 +119,14 @@ const SessionView = () => {
           duration={topic.duration ? `${topic.duration} minutes` : undefined}
         />
         {filesData && <FileList files={filesData.items} />}
-        <ChatWindow messages={messages} />
-        <MessageInput onSendMessage={handleSendMessage} />
+        <ChatWindow
+          messages={allMessages}
+          isLoading={isSending}
+        />
+        <MessageInput
+          onSendMessage={handleSendMessage}
+          disabled={isSending}
+        />
       </Container>
     </Box>
   );

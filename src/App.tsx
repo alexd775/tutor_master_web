@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import TopicsList from './pages/TopicsList';
 import SessionView from './pages/SessionView';
+import Sessions from './pages/Sessions';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route element={<PrivateRoute element={<MainLayout />} />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/topics" element={<TopicsList />} />
+            <Route path="/sessions" element={<Sessions />} />
             <Route path="/session/:sessionId" element={<SessionView />} />
           </Route>
         </Routes>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, KeyboardEvent } from 'react';
 import { Paper, InputBase, IconButton, useTheme } from '@mui/material';
 import { Send } from 'lucide-react';
 
@@ -14,8 +14,23 @@ const MessageInput = ({ onSendMessage, disabled }: MessageInputProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
-      onSendMessage(message);
+      onSendMessage(message.trim());
       setMessage('');
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      if (e.shiftKey) {
+        // Allow new line with Shift+Enter
+        return;
+      }
+      // Send message with just Enter
+      e.preventDefault();
+      if (message.trim()) {
+        onSendMessage(message.trim());
+        setMessage('');
+      }
     }
   };
 
@@ -47,9 +62,10 @@ const MessageInput = ({ onSendMessage, disabled }: MessageInputProps) => {
             },
           },
         }}
-        placeholder="Type your message..."
+        placeholder="Type your message... (Shift+Enter for new line)"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyDown}
         multiline
         maxRows={4}
         disabled={disabled}
@@ -60,7 +76,7 @@ const MessageInput = ({ onSendMessage, disabled }: MessageInputProps) => {
           p: '10px',
           color: theme.palette.mode === 'dark' ? theme.palette.primary.light : theme.palette.primary.main,
         }}
-        disabled={disabled}
+        disabled={disabled || !message.trim()}
       >
         <Send />
       </IconButton>
