@@ -13,4 +13,5 @@ export interface Session {
     feedback_score: number;
     created_at: string;
     topic_title: string;
+    user_full_name: string;
 }

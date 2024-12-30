@@ -7,6 +7,7 @@ import MessageInput from '../../components/session/MessageInput';
 import SessionHeader from '../../components/session/SessionHeader';
 import FileList from '../../components/session/FileList';
 import BackButton from '../../components/common/BackButton';
+import Notification from '../../components/common/Notification';
 import { useSessionData } from '../../hooks/useSession';
 import { useTopicFiles } from '../../hooks/useFiles';
 import { useChatHistory, useSendMessage } from '../../hooks/useChat';
@@ -16,6 +17,11 @@ const SessionView = () => {
   const { sessionId } = useParams();
   const theme = useTheme();
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
+  const [notification, setNotification] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({ open: false, message: '', severity: 'success' });
 
   const {
     session,
@@ -61,6 +67,22 @@ const SessionView = () => {
         },
       }
     );
+  };
+
+  const handleRestartSuccess = () => {
+    setNotification({
+      open: true,
+      message: 'Session restarted successfully',
+      severity: 'success',
+    });
+  };
+
+  const handleRestartError = (error: Error) => {
+    setNotification({
+      open: true,
+      message: 'Failed to restart session. Please try again.',
+      severity: 'error',
+    });
   };
 
   if (!sessionId) {
@@ -111,7 +133,11 @@ const SessionView = () => {
         <Box sx={{ mb: 2 }}>
           <BackButton to="/topics" toText='Topics' />
         </Box>
-        <SessionHeader session={session} />
+        <SessionHeader
+          session={session}
+          onRestartSuccess={handleRestartSuccess}
+          onRestartError={handleRestartError}
+        />
         <TopicInfo
           title={topic.title}
           description={topic.description}
@@ -126,6 +152,12 @@ const SessionView = () => {
         <MessageInput
           onSendMessage={handleSendMessage}
           disabled={isSending}
+        />
+        <Notification
+          open={notification.open}
+          message={notification.message}
+          severity={notification.severity}
+          onClose={() => setNotification({ ...notification, open: false })}
         />
       </Container>
     </Box>

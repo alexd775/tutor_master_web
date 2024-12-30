@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard';
 import TopicsList from './pages/TopicsList';
 import SessionView from './pages/SessionView';
 import Sessions from './pages/Sessions';
+import Management from './pages/Management';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/topics" element={<TopicsList />} />
             <Route path="/sessions" element={<Sessions />} />
             <Route path="/session/:sessionId" element={<SessionView />} />
+            <Route path="/management" element={<Management />} />
           </Route>
         </Routes>
       </Router>

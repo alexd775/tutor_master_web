@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { FileText, Download, File, ChevronDown, ChevronUp } from 'lucide-react';
 import { TopicFile } from '../../types/file';
+import { downloadFile } from '../../utils/fileManagement';
 
 interface FileListProps {
     files: TopicFile[];
@@ -78,7 +79,7 @@ const FileList = ({ files }: FileListProps) => {
                                 <IconButton
                                     edge="end"
                                     aria-label="download"
-                                    onClick={() => window.open(file.file_path, '_blank')}
+                                    onClick={() => downloadFile(file.id, file.filename)}
                                     sx={{ color: theme.palette.primary.main }}
                                 >
                                     <Download size={20} />

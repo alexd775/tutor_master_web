@@ -1,5 +1,5 @@
 import { Card, CardContent, Typography, Box, Chip, useTheme } from '@mui/material';
-import { Clock, BarChart2, ThumbsUp } from 'lucide-react';
+import { Clock, BarChart2, ThumbsUp, MessageCircle, User } from 'lucide-react';
 import { Session } from '../../types/session';
 
 interface SessionCardProps {
@@ -47,6 +47,20 @@ const SessionCard = ({ session, onClick }: SessionCardProps) => {
                         }}
                     />
                 </Box>
+                {session.user_full_name && (
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        mb: 2,
+                        color: theme.palette.text.secondary
+                    }}>
+                        <User size={16} />
+                        <Typography variant="body2">
+                            {session.user_full_name}
+                        </Typography>
+                    </Box>
+                )}
                 <Box sx={{ display: 'flex', gap: 2, color: 'text.secondary' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                         <Clock size={16} />
@@ -58,6 +72,14 @@ const SessionCard = ({ session, onClick }: SessionCardProps) => {
                             {Math.round(session.completion_rate * 100)}%
                         </Typography>
                     </Box>
+                    {session.interaction_data?.total_messages > 0 && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <MessageCircle size={16} />
+                            <Typography variant="body2">
+                                {session.interaction_data.total_messages} messages
+                            </Typography>
+                        </Box>
+                    )}
                     {session.feedback_score > 0 && (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <ThumbsUp size={16} />
