@@ -75,7 +75,7 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           HOST: ${{ secrets.HOST }}
           USER: ${{ secrets.USER }}
-          VITE_API_URL=http://${{secrets.HOST}}:8000
+          VITE_API_URL:http://${{secrets.HOST}}:8000
           VITE_AUTH_COOKIE_NAME:auth_token
           VITE_AUTH_COOKIE_DOMAIN:${{secrets.HOST}}
           VITE_ENABLE_REGISTRATION:true
