@@ -75,16 +75,6 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           HOST: ${{ secrets.HOST }}
           USER: ${{ secrets.USER }}
-          VITE_AUTH_COOKIE_NAME:auth_token
-          VITE_AUTH_COOKIE_DOMAIN:${{secrets.HOST}}
-          VITE_ENABLE_REGISTRATION:true
-          VITE_ENABLE_SOCIAL_LOGIN:false
-          VITE_ENABLE_PASSWORD_RESET:true
-          VITE_ENABLE_INVITE_CODE:true
-          VITE_APP_NAME:Tutor AI
-          VITE_SUPPORT_EMAIL:support@tutorai.dk
-          VITE_MAX_LOGIN_ATTEMPTS:5
-          VITE_LOGIN_TIMEOUT_MINUTES:15
 
         run: |
           # Copy docker-compose and env files
@@ -96,16 +86,16 @@ jobs:
           echo "TAG=$TAG" >> .env
           echo "HOST=$HOST" >> .env
           echo "VITE_API_URL=http://$HOST:8000" >> .env
-          echo "VITE_AUTH_COOKIE_NAME=$VITE_AUTH_COOKIE_NAME" >> .env
-          echo "VITE_AUTH_COOKIE_DOMAIN=$VITE_AUTH_COOKIE_DOMAIN" >> .env
-          echo "VITE_ENABLE_REGISTRATION=$VITE_ENABLE_REGISTRATION" >> .env
-          echo "VITE_ENABLE_SOCIAL_LOGIN=$VITE_ENABLE_SOCIAL_LOGIN" >> .env
-          echo "VITE_ENABLE_PASSWORD_RESET=$VITE_ENABLE_PASSWORD_RESET" >> .env
-          echo "VITE_ENABLE_INVITE_CODE=$VITE_ENABLE_INVITE_CODE" >> .env
-          echo "VITE_APP_NAME=$VITE_APP_NAME" >> .env
-          echo "VITE_SUPPORT_EMAIL=$VITE_SUPPORT_EMAIL" >> .env
-          echo "VITE_MAX_LOGIN_ATTEMPTS=$VITE_MAX_LOGIN_ATTEMPTS" >> .env
-          echo "VITE_LOGIN_TIMEOUT_MINUTES=$VITE_LOGIN_TIMEOUT_MINUTES" >> .env
+          echo "VITE_AUTH_COOKIE_NAME=auth_token" >> .env
+          echo "VITE_AUTH_COOKIE_DOMAIN=$HOST" >> .env
+          echo "VITE_ENABLE_REGISTRATION=true" >> .env
+          echo "VITE_ENABLE_SOCIAL_LOGIN=false" >> .env
+          echo "VITE_ENABLE_PASSWORD_RESET=true" >> .env
+          echo "VITE_ENABLE_INVITE_CODE=true" >> .env
+          echo "VITE_APP_NAME=Tutor AI" >> .env
+          echo "VITE_SUPPORT_EMAIL=support@tutorai.dk" >> .env
+          echo "VITE_MAX_LOGIN_ATTEMPTS=5" >> .env
+          echo "VITE_LOGIN_TIMEOUT_MINUTES=15" >> .env
           
           scp .env $USER@$HOST:$DEPLOY_PATH/.env
           
