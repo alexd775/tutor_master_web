@@ -3,7 +3,6 @@ version: '3.8'
 services:
   web:
     image: ${REGISTRY}/${IMAGE_NAME}:${TAG}
-    container_name: ${IMAGE_NAME}
     restart: unless-stopped
     ports:
       - "5175:5175"
