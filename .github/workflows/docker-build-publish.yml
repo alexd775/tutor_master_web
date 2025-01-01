@@ -75,7 +75,6 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
           HOST: ${{ secrets.HOST }}
           USER: ${{ secrets.USER }}
-          VITE_API_URL:http://${{secrets.HOST}}:8000
           VITE_AUTH_COOKIE_NAME:auth_token
           VITE_AUTH_COOKIE_DOMAIN:${{secrets.HOST}}
           VITE_ENABLE_REGISTRATION:true
@@ -95,7 +94,8 @@ jobs:
           echo "REGISTRY=$REGISTRY" >> .env
           echo "IMAGE_NAME=$IMAGE_NAME" >> .env
           echo "TAG=$TAG" >> .env
-          echo "VITE_API_URL=$VITE_API_URL" >> .env
+          echo "HOST=$HOST" >> .env
+          echo "VITE_API_URL=http://$HOST:8000" >> .env
           echo "VITE_AUTH_COOKIE_NAME=$VITE_AUTH_COOKIE_NAME" >> .env
           echo "VITE_AUTH_COOKIE_DOMAIN=$VITE_AUTH_COOKIE_DOMAIN" >> .env
           echo "VITE_ENABLE_REGISTRATION=$VITE_ENABLE_REGISTRATION" >> .env
