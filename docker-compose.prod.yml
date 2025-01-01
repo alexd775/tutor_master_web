@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web:
+    image: ${REGISTRY}/${IMAGE_NAME}:${TAG}
+    container_name: ${IMAGE_NAME}
+    restart: unless-stopped
+    ports:
+      - "5175:5175"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=${VITE_API_URL}
+      - VITE_AUTH_COOKIE_NAME=${VITE_AUTH_COOKIE_NAME}
+      - VITE_AUTH_COOKIE_DOMAIN=${VITE_AUTH_COOKIE_DOMAIN}
+      - VITE_ENABLE_REGISTRATION=${VITE_ENABLE_REGISTRATION}
+      - VITE_ENABLE_SOCIAL_LOGIN=${VITE_ENABLE_SOCIAL_LOGIN}
+      - VITE_ENABLE_PASSWORD_RESET=${VITE_ENABLE_PASSWORD_RESET}
+      - VITE_ENABLE_INVITE_CODE=${VITE_ENABLE_INVITE_CODE}
+      - VITE_APP_NAME=${VITE_APP_NAME}
+      - VITE_SUPPORT_EMAIL=${VITE_SUPPORT_EMAIL}
+      - VITE_MAX_LOGIN_ATTEMPTS=${VITE_MAX_LOGIN_ATTEMPTS}
+      - VITE_LOGIN_TIMEOUT_MINUTES=${VITE_LOGIN_TIMEOUT_MINUTES}
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5175"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  app-network:
+    driver: bridge 
