@@ -23,7 +23,7 @@ export const useLogin = () => {
         });
 
         setTokens(authData.access_token, authData.refresh_token);
-        
+
         const { data: userData } = await api.get<User>('/api/v1/users/me');
         return { auth: authData, user: userData };
       } catch (error) {
@@ -61,7 +61,7 @@ export const useRegister = () => {
           if (error.response?.status === 422) {
             throw new Error(JSON.stringify(error.response.data));
           }
-          throw new Error(error.response?.data?.message || 'Registration failed');
+          throw new Error(error.response?.data?.detail || 'Registration failed');
         }
         throw new Error('An unexpected error occurred');
       }

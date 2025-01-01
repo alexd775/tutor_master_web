@@ -8,6 +8,7 @@ interface EnvConfig {
     enableRegistration: boolean;
     enableSocialLogin: boolean;
     enablePasswordReset: boolean;
+    enableInviteCode: boolean;
   };
   app: {
     name: string;
@@ -29,6 +30,7 @@ export const env: EnvConfig = {
     enableRegistration: import.meta.env.VITE_ENABLE_REGISTRATION === 'true',
     enableSocialLogin: import.meta.env.VITE_ENABLE_SOCIAL_LOGIN === 'true',
     enablePasswordReset: import.meta.env.VITE_ENABLE_PASSWORD_RESET === 'true',
+    enableInviteCode: import.meta.env.VITE_ENABLE_INVITE_CODE === 'true',
   },
   app: {
     name: import.meta.env.VITE_APP_NAME,

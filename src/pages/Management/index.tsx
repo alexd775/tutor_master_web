@@ -11,6 +11,7 @@ import TopicsManagement from '../../components/management/TopicsManagement';
 import SessionsManagement from '../../components/management/SessionsManagement';
 import StudentsManagement from '../../components/management/students/StudentsManagement';
 import AgentsManagement from '../../components/management/agents/AgentsManagement';
+import InviteCodesList from '../../components/management/invites/InviteCodesList';
 
 interface LocationState {
     tab?: number;
@@ -45,6 +46,7 @@ const Management = () => {
                     <Tab label="Sessions" />
                     <Tab label="Students" />
                     <Tab label="Agents" />
+                    <Tab label="Invite Codes" />
                 </Tabs>
             </Box>
 
@@ -52,6 +54,7 @@ const Management = () => {
             {activeTab === 1 && <SessionsManagement />}
             {activeTab === 2 && <StudentsManagement />}
             {activeTab === 3 && <AgentsManagement />}
+            {activeTab === 4 && <InviteCodesList />}
         </Box>
     );
 };

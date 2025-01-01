@@ -21,6 +21,7 @@ export interface RegisterRequest {
   email: string;
   password: string;
   full_name: string;
+  invite_code?: string;
 }
 
 export interface AuthResponse {
@@ -28,7 +29,6 @@ export interface AuthResponse {
   refresh_token: string;
   token_type: string;
 }
-
 
 export interface User {
   id: string;

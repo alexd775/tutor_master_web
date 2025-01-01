@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Button, Alert, FormControl, InputLabel, Select, MenuItem, Snackbar } from '@mui/material';
+import { Button, Alert, FormControl, InputLabel, Select, MenuItem, Snackbar, TextField } from '@mui/material';
 import { useRegister } from '../../hooks/auth';
 import { UserRole } from '../../types/auth';
 import FormTextField from '../common/Form/FormTextField';
+import { env } from '../../config/env';
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ const RegisterForm = () => {
     password: '',
     fullName: '',
     role: UserRole.STUDENT,
+    inviteCode: '',
   });
 
   const { mutate: register, isError, error, isSuccess } = useRegister();
@@ -20,6 +22,7 @@ const RegisterForm = () => {
       email: formData.email,
       password: formData.password,
       full_name: formData.fullName,
+      ...(env.features.enableInviteCode && { invite_code: formData.inviteCode }),
     });
   };
 
@@ -66,6 +69,15 @@ const RegisterForm = () => {
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
           required
         />
+        {env.features.enableInviteCode && (
+          <FormTextField
+            label="Invite Code"
+            value={formData.inviteCode}
+            onChange={(e) => setFormData({ ...formData, inviteCode: e.target.value })}
+            required
+            helperText="Please enter your invitation code"
+          />
+        )}
         <FormControl fullWidth margin="normal">
           <InputLabel>Role</InputLabel>
           <Select
