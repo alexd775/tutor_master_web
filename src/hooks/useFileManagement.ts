@@ -7,16 +7,18 @@ interface UploadFileData {
     file: File;
     title: string;
     description?: string;
+    file_search: boolean;
 }
 
 export const useFileManagement = () => {
     const queryClient = useQueryClient();
 
     const uploadFile = useMutation({
-        mutationFn: async ({ topicId, file, title, description }: UploadFileData) => {
+        mutationFn: async ({ topicId, file, title, description, file_search }: UploadFileData) => {
             const formData = new FormData();
             formData.append('file', file);
             formData.append('title', title);
+            formData.append('file_search', file_search.toString());
             if (description) {
                 formData.append('description', description);
             }

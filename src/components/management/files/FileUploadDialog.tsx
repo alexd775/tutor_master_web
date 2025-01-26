@@ -7,6 +7,9 @@ import {
     Button,
     TextField,
     Box,
+    FormControlLabel,
+    Checkbox,
+    Tooltip,
 } from '@mui/material';
 import { useFileManagement } from '../../../hooks/useFileManagement';
 
@@ -20,6 +23,7 @@ const FileUploadDialog = ({ open, onClose, topicId }: FileUploadDialogProps) => 
     const [file, setFile] = useState<File | null>(null);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [fileSearch, setFileSearch] = useState(false);
     const { uploadFile } = useFileManagement();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -32,11 +36,13 @@ const FileUploadDialog = ({ open, onClose, topicId }: FileUploadDialogProps) => 
                 file,
                 title: title || file.name,
                 description,
+                file_search: fileSearch,
             });
             onClose();
             setFile(null);
             setTitle('');
             setDescription('');
+            setFileSearch(false);
         } catch (error) {
             console.error('Failed to upload file:', error);
         }
@@ -62,6 +68,17 @@ const FileUploadDialog = ({ open, onClose, topicId }: FileUploadDialogProps) => 
                             required
                             fullWidth
                         />
+                        <Tooltip title="Enable this option to make the file searchable using AI">
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={fileSearch}
+                                        onChange={(e) => setFileSearch(e.target.checked)}
+                                    />
+                                }
+                                label="Make file searchable"
+                            />
+                        </Tooltip>
                         <TextField
                             label="Title"
                             value={title}

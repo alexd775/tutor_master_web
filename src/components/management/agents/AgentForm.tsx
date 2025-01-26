@@ -10,6 +10,10 @@ import {
     Switch,
     FormControlLabel,
     styled,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel,
 } from '@mui/material';
 import { Agent } from '../../../types/agent';
 
@@ -34,6 +38,7 @@ const AgentForm = ({ open, onClose, onSubmit, initialData, title }: AgentFormPro
         name: '',
         description: '',
         type: 'chatgpt',
+        model: 'gpt-4o',
         config: {},
         system_prompt: '',
         welcome_message: '',
@@ -47,6 +52,7 @@ const AgentForm = ({ open, onClose, onSubmit, initialData, title }: AgentFormPro
                 name: initialData.name,
                 description: initialData.description || '',
                 type: initialData.type,
+                model: initialData.model || '',
                 config: initialData.config,
                 system_prompt: initialData.system_prompt,
                 welcome_message: initialData.welcome_message,
@@ -58,6 +64,7 @@ const AgentForm = ({ open, onClose, onSubmit, initialData, title }: AgentFormPro
                 name: '',
                 description: '',
                 type: 'chatgpt',
+                model: 'gpt-4o',
                 config: {},
                 system_prompt: '',
                 welcome_message: '',
@@ -83,6 +90,24 @@ const AgentForm = ({ open, onClose, onSubmit, initialData, title }: AgentFormPro
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             required
+                            fullWidth
+                        />
+                        <FormControl fullWidth required>
+                            <InputLabel id="agent-type-label">Type</InputLabel>
+                            <Select
+                                labelId="agent-type-label"
+                                value={formData.type}
+                                label="Type"
+                                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                            >
+                                <MenuItem value="chatgpt">ChatGPT</MenuItem>
+                                <MenuItem value="assistant">Assistant</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <TextField
+                            label="Model"
+                            value={formData.model}
+                            onChange={(e) => setFormData({ ...formData, model: e.target.value })}
                             fullWidth
                         />
                         <ResizableTextField

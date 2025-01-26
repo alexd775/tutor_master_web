@@ -8,6 +8,7 @@ export interface TopicFile {
     size: number;
     created_at: string;
     topic_id: string;
+    file_search: boolean;
 }
 
 export interface FileListResponse {

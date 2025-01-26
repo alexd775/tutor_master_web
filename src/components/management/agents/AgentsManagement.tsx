@@ -7,6 +7,7 @@ import {
     CircularProgress,
 } from '@mui/material';
 import { Plus } from 'lucide-react';
+import { AxiosError } from 'axios';
 import { useAgents } from '../../../hooks/useAgents';
 import { useAgentManagement } from '../../../hooks/useAgentManagement';
 import AgentCard from './AgentCard';
@@ -46,7 +47,8 @@ const AgentsManagement = () => {
                 setEditAgent(null);
                 showNotification('Agent updated successfully', 'success');
             } catch (error) {
-                showNotification('Failed to update agent', 'error');
+                const message = (error as AxiosError).response?.data?.detail || 'Failed to update agent';
+                showNotification(message, 'error');
             }
         }
     };

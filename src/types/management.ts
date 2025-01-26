@@ -17,4 +17,5 @@ export interface TopicFormData {
     difficulty_level: number;
     parent_id?: string;
     duration: number;
+    session_opening_message?: string;
 }

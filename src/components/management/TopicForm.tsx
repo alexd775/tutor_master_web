@@ -8,11 +8,20 @@ import {
     TextField,
     MenuItem,
     Box,
+    styled,
 } from '@mui/material';
 import { TopicFormData } from '../../types/management';
 import { TopicResponse } from '../../types/topic';
 import { useAgents } from '../../hooks/useAgents';
 import { useTopics } from '../../hooks/topics';
+
+// Create a styled textarea component that's resizable
+const ResizableTextField = styled(TextField)({
+    '& .MuiInputBase-inputMultiline': {
+        resize: 'vertical',
+        minHeight: '100px',
+    },
+});
 
 interface TopicFormProps {
     open: boolean;
@@ -34,6 +43,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
         duration: 30,
         parent_id: '',
         agent_id: '',
+        session_opening_message: '',
     });
 
     useEffect(() => {
@@ -46,6 +56,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                 duration: initialData.duration,
                 parent_id: initialData.parent_id || '',
                 agent_id: initialData.agent_id,
+                session_opening_message: initialData.session_opening_message || '',
             });
         } else {
             setFormData({
@@ -56,6 +67,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                 duration: 30,
                 parent_id: '',
                 agent_id: '',
+                session_opening_message: '',
             });
         }
     }, [initialData]);
@@ -99,11 +111,20 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                         >
                             {agents?.map((agent) => agent.is_active ? (
                                 <MenuItem key={agent.id} value={agent.id}>
-                                    {agent.name}
+                                    {agent.name} ({agent.type})
                                 </MenuItem>
                             ) : null)}
                         </TextField>
-                        {parentTopics.length > 0 && (
+                        <ResizableTextField
+                            label="Session Opening Message"
+                            value={formData.session_opening_message}
+                            onChange={(e) => setFormData({ ...formData, session_opening_message: e.target.value })}
+                            multiline
+                            minRows={1}
+                            fullWidth
+                            helperText="Message that will be shown at the start of each session"
+                        />
+                        {/* {parentTopics.length > 0 && (
                             <TextField
                                 select
                                 label="Parent Topic"
@@ -118,7 +139,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                                     </MenuItem>
                                 ))}
                             </TextField>
-                        )}
+                        )} */}
                         <TextField
                             select
                             label="Difficulty Level"

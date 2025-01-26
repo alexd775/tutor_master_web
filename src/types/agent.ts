@@ -3,6 +3,7 @@ export interface Agent {
     name: string;
     description?: string;
     type: string;
+    model?: string;
     is_active: boolean;
     config: Record<string, any>;
     system_prompt: string;

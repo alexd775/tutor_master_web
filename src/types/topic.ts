@@ -4,6 +4,7 @@ export interface TopicResponse {
   description?: string;
   content: Record<string, any>;
   agent_id: string;
+  session_opening_message?: string;
   difficulty_level: number;
   parent_id?: string;
   engagement_score: number;
@@ -20,6 +21,7 @@ export interface TopicCreate {
   description?: string;
   content: Record<string, any>;
   agent_id: string;
+  session_opening_message?: string;
   difficulty_level?: number;
   parent_id?: string;
 }
