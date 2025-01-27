@@ -10,6 +10,7 @@ import {
     Paper,
     useTheme,
     Collapse,
+    Tooltip,
 } from '@mui/material';
 import { FileText, Download, File, ChevronDown, ChevronUp } from 'lucide-react';
 import { TopicFile } from '../../types/file';
@@ -76,14 +77,16 @@ const FileList = ({ files }: FileListProps) => {
                         <ListItem
                             key={file.id}
                             secondaryAction={
-                                <IconButton
-                                    edge="end"
-                                    aria-label="download"
-                                    onClick={() => downloadFile(file.id, file.filename)}
-                                    sx={{ color: theme.palette.primary.main }}
+                                file.downloadable && (
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="download"
+                                        onClick={() => downloadFile(file.id, file.filename)}
+                                        sx={{ color: theme.palette.primary.main }}
                                 >
-                                    <Download size={20} />
-                                </IconButton>
+                                        <Download size={20} />
+                                    </IconButton>
+                                )
                             }
                             sx={{
                                 borderTop: `1px solid ${theme.palette.divider}`,
@@ -95,16 +98,18 @@ const FileList = ({ files }: FileListProps) => {
                             <ListItemIcon sx={{ color: theme.palette.text.secondary }}>
                                 <File size={20} />
                             </ListItemIcon>
-                            <ListItemText
-                                primary={file.title}
-                                secondary={`${file.filename} • ${formatFileSize(file.size)}`}
-                                primaryTypographyProps={{
-                                    color: theme.palette.text.primary
-                                }}
-                                secondaryTypographyProps={{
-                                    color: theme.palette.text.secondary
-                                }}
-                            />
+                            <Tooltip title={file.description || ''}>
+                                <ListItemText
+                                    primary={file.title}
+                                    secondary={`${file.filename} • ${formatFileSize(file.size)}`}
+                                    primaryTypographyProps={{
+                                        color: theme.palette.text.primary
+                                    }}
+                                    secondaryTypographyProps={{
+                                        color: theme.palette.text.secondary
+                                    }}
+                                />
+                            </Tooltip>
                         </ListItem>
                     ))}
                 </List>

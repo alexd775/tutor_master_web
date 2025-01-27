@@ -24,6 +24,7 @@ const FileUploadDialog = ({ open, onClose, topicId }: FileUploadDialogProps) => 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [fileSearch, setFileSearch] = useState(false);
+    const [fileDownloadable, setFileDownloadable] = useState(true);
     const { uploadFile } = useFileManagement();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -37,12 +38,14 @@ const FileUploadDialog = ({ open, onClose, topicId }: FileUploadDialogProps) => 
                 title: title || file.name,
                 description,
                 file_search: fileSearch,
+                downloadable: fileDownloadable,
             });
             onClose();
             setFile(null);
             setTitle('');
             setDescription('');
             setFileSearch(false);
+            setFileDownloadable(true);
         } catch (error) {
             console.error('Failed to upload file:', error);
         }
@@ -77,6 +80,17 @@ const FileUploadDialog = ({ open, onClose, topicId }: FileUploadDialogProps) => 
                                     />
                                 }
                                 label="Make file searchable"
+                            />
+                        </Tooltip>
+                        <Tooltip title="Enable this option to make the file downloadable">
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={fileDownloadable}
+                                        onChange={(e) => setFileDownloadable(e.target.checked)}
+                                    />
+                                }
+                                label="Make file downloadable"
                             />
                         </Tooltip>
                         <TextField
