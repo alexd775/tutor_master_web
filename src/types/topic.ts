@@ -4,7 +4,6 @@ export interface TopicResponse {
   description?: string;
   content: Record<string, any>;
   agent_id: string;
-  session_opening_message?: string;
   difficulty_level: number;
   parent_id?: string;
   engagement_score: number;
@@ -14,6 +13,8 @@ export interface TopicResponse {
   subtopic_count: number;
   total_sessions: number;
   average_completion_rate: number;
+  is_hidden?: boolean;
+  session_opening_message?: string;
 }
 
 export interface TopicCreate {
@@ -21,7 +22,8 @@ export interface TopicCreate {
   description?: string;
   content: Record<string, any>;
   agent_id: string;
-  session_opening_message?: string;
   difficulty_level?: number;
   parent_id?: string;
+  is_hidden?: boolean;
+  session_opening_message?: string;
 }

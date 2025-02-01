@@ -8,6 +8,8 @@ import {
     TextField,
     MenuItem,
     Box,
+    FormControlLabel,
+    Switch,
     styled,
 } from '@mui/material';
 import { TopicFormData } from '../../types/management';
@@ -43,6 +45,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
         duration: 30,
         parent_id: '',
         agent_id: '',
+        is_hidden: false,
         session_opening_message: '',
     });
 
@@ -56,6 +59,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                 duration: initialData.duration,
                 parent_id: initialData.parent_id || '',
                 agent_id: initialData.agent_id,
+                is_hidden: initialData.is_hidden || false,
                 session_opening_message: initialData.session_opening_message || '',
             });
         } else {
@@ -67,6 +71,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                 duration: 30,
                 parent_id: '',
                 agent_id: '',
+                is_hidden: false,
                 session_opening_message: '',
             });
         }
@@ -80,7 +85,18 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
     const parentTopics = topics?.filter(t => !t.parent_id) || [];
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <Dialog 
+            open={open} 
+            onClose={onClose} 
+            maxWidth="sm" 
+            fullWidth
+            sx={{
+                '& .MuiDialog-paper': {
+                    zIndex: 9999,
+                },
+                zIndex: 9999,
+            }}
+        >
             <DialogTitle>{title}</DialogTitle>
             <form onSubmit={handleSubmit}>
                 <DialogContent>
@@ -111,20 +127,12 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                         >
                             {agents?.map((agent) => agent.is_active ? (
                                 <MenuItem key={agent.id} value={agent.id}>
-                                    {agent.name} ({agent.type})
+                                    {agent.name}
                                 </MenuItem>
                             ) : null)}
                         </TextField>
-                        <ResizableTextField
-                            label="Session Opening Message"
-                            value={formData.session_opening_message}
-                            onChange={(e) => setFormData({ ...formData, session_opening_message: e.target.value })}
-                            multiline
-                            minRows={1}
-                            fullWidth
-                            helperText="Message that will be shown at the start of each session"
-                        />
-                        {/* {parentTopics.length > 0 && (
+                        {/* Parent topic selection commented out as requested
+                        {parentTopics.length > 0 && (
                             <TextField
                                 select
                                 label="Parent Topic"
@@ -139,7 +147,8 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                                     </MenuItem>
                                 ))}
                             </TextField>
-                        )} */}
+                        )}
+                        */}
                         <TextField
                             select
                             label="Difficulty Level"
@@ -159,6 +168,24 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                             value={formData.duration}
                             onChange={(e) => setFormData({ ...formData, duration: Number(e.target.value) })}
                             fullWidth
+                        />
+                        <ResizableTextField
+                            label="Session Opening Message"
+                            value={formData.session_opening_message}
+                            onChange={(e) => setFormData({ ...formData, session_opening_message: e.target.value })}
+                            multiline
+                            minRows={3}
+                            fullWidth
+                            helperText="Custom message to be shown at the start of each session"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={formData.is_hidden}
+                                    onChange={(e) => setFormData({ ...formData, is_hidden: e.target.checked })}
+                                />
+                            }
+                            label="Hidden Topic"
                         />
                     </Box>
                 </DialogContent>
