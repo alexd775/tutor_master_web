@@ -4,6 +4,7 @@ import MainLayout from './components/common/Layout/MainLayout';
 import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ExperimentLogin from './pages/ExperimentLogin';
 import Dashboard from './pages/Dashboard';
 import TopicsList from './pages/TopicsList';
 import SessionView from './pages/SessionView';
@@ -17,6 +18,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/experiment" element={<ExperimentLogin />} />
           <Route element={<PrivateRoute element={<MainLayout />} />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/topics" element={<TopicsList />} />
@@ -30,4 +32,4 @@ function App() {
   );
 }
 
-export default App;
+export default App

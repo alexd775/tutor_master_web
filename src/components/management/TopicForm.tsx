@@ -124,12 +124,19 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                             required
                             fullWidth
                             disabled={isLoadingAgents}
+                            SelectProps={{
+                                MenuProps: {
+                                    sx: {
+                                        zIndex: 10000
+                                    }
+                                }
+                            }}
                         >
-                            {agents?.map((agent) => agent.is_active ? (
+                            {agents?.filter(agent => agent.is_active).map((agent) => (
                                 <MenuItem key={agent.id} value={agent.id}>
                                     {agent.name}
                                 </MenuItem>
-                            ) : null)}
+                            ))}
                         </TextField>
                         {/* Parent topic selection commented out as requested
                         {parentTopics.length > 0 && (
@@ -155,6 +162,13 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                             value={formData.difficulty_level}
                             onChange={(e) => setFormData({ ...formData, difficulty_level: Number(e.target.value) })}
                             fullWidth
+                            SelectProps={{
+                                MenuProps: {
+                                    sx: {
+                                        zIndex: 10000
+                                    }
+                                }
+                            }}
                         >
                             {[1, 2, 3, 4, 5].map((level) => (
                                 <MenuItem key={level} value={level}>

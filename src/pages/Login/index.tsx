@@ -13,8 +13,14 @@ const Login = () => {
           Register here
         </Link>
       </Typography>
+      <Typography variant="body2" sx={{ mt: 1 }}>
+        Have an experiment access code?{' '}
+        <Link component={RouterLink} to="/experiment">
+          Login to experiment
+        </Link>
+      </Typography>
     </AuthLayout>
   );
 };
 
-export default Login;
+export default Login
