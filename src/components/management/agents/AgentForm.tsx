@@ -80,10 +80,51 @@ const AgentForm = ({ open, onClose, onSubmit, initialData, title }: AgentFormPro
     };
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <Dialog 
+            open={open} 
+            onClose={onClose} 
+            maxWidth="sm" 
+            fullWidth
+            PaperProps={{
+                sx: {
+                    height: 'auto',
+                    maxHeight: '90vh',
+                    m: 2,
+                    position: 'relative',
+                    top: '32px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden',
+                }
+            }}
+            sx={{
+                '& .MuiDialog-container': {
+                    alignItems: 'flex-start',
+                    pt: 4,
+                }
+            }}
+        >
             <DialogTitle>{title}</DialogTitle>
-            <form onSubmit={handleSubmit}>
-                <DialogContent>
+            <form onSubmit={handleSubmit} style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                overflow: 'hidden',
+                flex: 1 
+            }}>
+                <DialogContent sx={{ 
+                    flex: 1, 
+                    overflow: 'auto',
+                    '&::-webkit-scrollbar': {
+                        width: '0.4em'
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        background: 'transparent'
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        background: 'rgba(0,0,0,.2)',
+                        borderRadius: '4px'
+                    }
+                }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         <TextField
                             label="Name"
