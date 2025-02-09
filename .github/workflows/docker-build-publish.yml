@@ -84,16 +84,16 @@ jobs:
           echo "REGISTRY=$REGISTRY" >> .env
           echo "IMAGE_NAME=$IMAGE_NAME" >> .env
           echo "TAG=$TAG" >> .env
-          echo "HOST=$HOST" >> .env
-          echo "VITE_API_URL=http://$HOST:8000" >> .env
+          echo "HOST=tutormaster.dk" >> .env
+          echo "VITE_API_URL=https://api.tutormaster.dk" >> .env
           echo "VITE_AUTH_COOKIE_NAME=auth_token" >> .env
-          echo "VITE_AUTH_COOKIE_DOMAIN=$HOST" >> .env
+          echo "VITE_AUTH_COOKIE_DOMAIN=tutormaster.dk" >> .env
           echo "VITE_ENABLE_REGISTRATION=true" >> .env
           echo "VITE_ENABLE_SOCIAL_LOGIN=false" >> .env
           echo "VITE_ENABLE_PASSWORD_RESET=true" >> .env
           echo "VITE_ENABLE_INVITE_CODE=true" >> .env
-          echo "VITE_APP_NAME=Tutor AI" >> .env
-          echo "VITE_SUPPORT_EMAIL=support@tutorai.dk" >> .env
+          echo "VITE_APP_NAME=Tutor Master" >> .env
+          echo "VITE_SUPPORT_EMAIL=support@tutormaster.dk" >> .env
           echo "VITE_MAX_LOGIN_ATTEMPTS=5" >> .env
           echo "VITE_LOGIN_TIMEOUT_MINUTES=15" >> .env
           
