@@ -5,7 +5,7 @@ services:
     image: ${REGISTRY}/${IMAGE_NAME}:${TAG}
     restart: unless-stopped
     ports:
-      - "5175:5175"
+      - "127.0.0.1:5175:5175"
     environment:
       - NODE_ENV=production
       - VITE_API_URL=${VITE_API_URL}
