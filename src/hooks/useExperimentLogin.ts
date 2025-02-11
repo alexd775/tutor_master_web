@@ -20,7 +20,7 @@ export const useExperimentLogin = ({ onSuccess, onError }: {
   return useMutation({
     mutationFn: async (data: ExperimentLoginRequest) => {
       const { data: response } = await api.post<AuthResponse>(
-        `/api/v1/experiments/activate/`,
+        '/api/v1/experiments/activate',
         {
           code: data.code,
           password: data.password || undefined,
