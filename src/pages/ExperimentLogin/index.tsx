@@ -53,7 +53,7 @@ const ExperimentLogin = () => {
   });
 
   useEffect(() => {
-    if (experiments?.length === 1) {
+    if (experiments?.length && experiments.length > 0) {
       setSelectedExperiment(experiments[0]);
       setFormData(prev => ({ ...prev, experiment_id: experiments[0].id }));
     }
@@ -202,7 +202,7 @@ const ExperimentLogin = () => {
           Enter your access code to participate in the experiment. You can get the code from your experiment administrator.
         </Typography>
 
-        {experiments.length > 1 && (
+        {experiments.length > 10 && ( // TODO: set to >1 when we need a way to select an experiment
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel>Select Experiment</InputLabel>
             <Select
