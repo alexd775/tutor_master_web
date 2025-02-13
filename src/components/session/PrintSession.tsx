@@ -33,13 +33,24 @@ const PrintSession = ({ open, onClose, session, messages }: PrintSessionProps) =
           },
         },
       }}
+      sx={{
+        zIndex: 9999,
+      }}
     >
-      <DialogTitle sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        '@media print': { display: 'none' },
-      }}>
+      <DialogTitle 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          '@media print': { display: 'none' },
+          position: 'sticky',
+          top: 0,
+          bgcolor: 'background.paper',
+          zIndex: 1000,
+          borderBottom: 1,
+          borderColor: 'divider',
+        }}
+      >
         <Typography variant="h6">Session Preview</Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button
@@ -61,12 +72,19 @@ const PrintSession = ({ open, onClose, session, messages }: PrintSessionProps) =
             {session.topic_title}
           </Typography>
           <Typography variant="body2" color="text.secondary" paragraph>
-            Created: {formatDate(session.created_at)}
+            Session Created: {formatDate(session.created_at)} / ID: {session.id}
           </Typography>
-          <Typography variant="body2" paragraph>
-            Duration: {session.duration} minutes | 
-            Completion Rate: {Math.round(session.completion_rate * 100)}%
-          </Typography>
+          <Box sx={{ display: 'flex', gap: 4, mb: 2 }}>
+            {/* <Typography variant="body2">
+              Duration: {session.duration} minutes
+            </Typography> */}
+            {/* <Typography variant="body2">
+              Completion Rate: {Math.round(session.completion_rate * 100)}%
+            </Typography> */}
+            <Typography variant="body2">
+              User: {session.user_full_name || 'Unknown'} / {session.user_id || '-'}
+            </Typography>
+          </Box>
 
           {/* Chat Messages */}
           <Box sx={{ mt: 4 }}>
@@ -89,7 +107,7 @@ const PrintSession = ({ open, onClose, session, messages }: PrintSessionProps) =
                     color: 'text.secondary',
                   }}
                 >
-                  {message.role === 'user' ? 'You' : 'Tutor'} - {formatDate(message.created_at)}
+                  {message.role === 'user' ? 'User' : 'Tutor'} - {formatDate(message.created_at)}
                 </Typography>
                 <Box sx={{
                   '& p': { m: 0, '&:not(:last-child)': { mb: 1 } },

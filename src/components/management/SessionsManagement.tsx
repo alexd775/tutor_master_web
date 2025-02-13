@@ -6,14 +6,18 @@ import { useUsers } from '../../hooks/useUsers';
 import { useTopics } from '../../hooks/topics';
 import SessionCard from '../sessions/SessionCard';
 import { useNavigate } from 'react-router-dom';
+import { useChatHistory } from '../../hooks/useChat';
+import PrintSession from '../session/PrintSession';
 
 const SessionsManagement = () => {
     const location = useLocation();
     const [selectedUserId, setSelectedUserId] = useState<string>('');
     const [selectedTopicId, setSelectedTopicId] = useState<string>('');
+    const [selectedSession, setSelectedSession] = useState<string | null>(null);
     const { data: sessions, isLoading } = useAllSessions(selectedUserId, selectedTopicId);
     const { data: users } = useUsers();
     const { data: topics } = useTopics();
+    const { data: messages = [] } = useChatHistory(selectedSession || '');
     const navigate = useNavigate();
 
     // Handle user selection from state
@@ -75,11 +79,20 @@ const SessionsManagement = () => {
                     <Grid item xs={12} sm={6} md={4} key={session.id}>
                         <SessionCard
                             session={session}
-                            onClick={() => navigate(`/session/${session.topic_id}`)}
+                            onClick={() => setSelectedSession(session.id)}
                         />
                     </Grid>
                 ))}
             </Grid>
+
+            {selectedSession && (
+                <PrintSession
+                    open={!!selectedSession}
+                    onClose={() => setSelectedSession(null)}
+                    session={sessions?.find(s => s.id === selectedSession)!}
+                    messages={messages}
+                />
+            )}
         </Box>
     );
 };
