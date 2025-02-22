@@ -90,7 +90,8 @@ const SessionHeader = ({ session, onRestartSuccess, onRestartError, isExpired = 
             size="small"
             startIcon={<RefreshCw size={16} />}
             onClick={() => setIsConfirmOpen(true)}
-            disabled={restartSession.isPending || isExpired || isExpirable}
+            // disabled={restartSession.isPending || isExpired || isExpirable}
+            disabled={restartSession.isPending}
           >
             Restart Session
           </Button>
