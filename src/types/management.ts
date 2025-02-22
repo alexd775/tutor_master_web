@@ -19,4 +19,5 @@ export interface TopicFormData {
     duration: number;
     is_hidden?: boolean;
     session_opening_message?: string;
+    session_time_limit?: number;
 }

@@ -15,6 +15,7 @@ export interface TopicResponse {
   average_completion_rate: number;
   is_hidden?: boolean;
   session_opening_message?: string;
+  session_time_limit?: number;
 }
 
 export interface TopicCreate {
@@ -26,4 +27,5 @@ export interface TopicCreate {
   parent_id?: string;
   is_hidden?: boolean;
   session_opening_message?: string;
+  session_time_limit?: number;
 }

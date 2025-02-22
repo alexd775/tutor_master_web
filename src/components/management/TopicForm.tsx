@@ -15,7 +15,7 @@ import {
 import { TopicFormData } from '../../types/management';
 import { TopicResponse } from '../../types/topic';
 import { useAgents } from '../../hooks/useAgents';
-import { useTopics } from '../../hooks/topics';
+// import { useTopics } from '../../hooks/topics';
 
 // Create a styled textarea component that's resizable
 const ResizableTextField = styled(TextField)({
@@ -35,7 +35,7 @@ interface TopicFormProps {
 
 const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormProps) => {
     const { data: agents, isLoading: isLoadingAgents } = useAgents();
-    const { data: topics } = useTopics();
+    // const { data: topics } = useTopics();
 
     const [formData, setFormData] = useState<TopicFormData & { agent_id: string }>({
         title: '',
@@ -47,6 +47,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
         agent_id: '',
         is_hidden: false,
         session_opening_message: '',
+        session_time_limit: 0,
     });
 
     useEffect(() => {
@@ -61,6 +62,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                 agent_id: initialData.agent_id,
                 is_hidden: initialData.is_hidden || false,
                 session_opening_message: initialData.session_opening_message || '',
+                session_time_limit: initialData.session_time_limit,
             });
         } else {
             setFormData({
@@ -73,6 +75,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                 agent_id: '',
                 is_hidden: false,
                 session_opening_message: '',
+                session_time_limit: 0,
             });
         }
     }, [initialData]);
@@ -82,7 +85,7 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
         onSubmit(formData);
     };
 
-    const parentTopics = topics?.filter(t => !t.parent_id) || [];
+    // const parentTopics = topics?.filter(t => !t.parent_id) || [];
 
     return (
         <Dialog 
@@ -213,6 +216,21 @@ const TopicForm = ({ open, onClose, onSubmit, initialData, title }: TopicFormPro
                             value={formData.duration}
                             onChange={(e) => setFormData({ ...formData, duration: Number(e.target.value) })}
                             fullWidth
+                        />
+                        <TextField
+                            label="Session Time Limit (minutes)"
+                            type="number"
+                            value={formData.session_time_limit || ''}
+                            onChange={(e) => {
+                                const value = e.target.value ? Number(e.target.value) : 0;
+                                setFormData({ ...formData, session_time_limit: value });
+                            }}
+                            fullWidth
+                            helperText="Optional. Leave empty for no time limit"
+                            inputProps={{
+                                min: 0,
+                                step: 1
+                            }}
                         />
                         <ResizableTextField
                             label="Session Opening Message"

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Container, useTheme, CircularProgress, Typography } from '@mui/material';
 import { useParams, Navigate } from 'react-router-dom';
 import TopicInfo from '../../components/session/TopicInfo';
@@ -8,9 +8,12 @@ import SessionHeader from '../../components/session/SessionHeader';
 import FileList from '../../components/session/FileList';
 import BackButton from '../../components/common/BackButton';
 import Notification from '../../components/common/Notification';
+import SessionTimer from '../../components/session/SessionTimer';
+import ExpirationDialog from '../../components/session/ExpirationDialog';
 import { useSessionData } from '../../hooks/useSession';
 import { useTopicFiles } from '../../hooks/useFiles';
 import { useChatHistory, useSendMessage } from '../../hooks/useChat';
+import { useSessionTimer } from '../../hooks/useSessionTimer';
 import { ChatMessage } from '../../types/chat';
 
 const SessionView = () => {
@@ -20,8 +23,9 @@ const SessionView = () => {
   const [notification, setNotification] = useState<{
     open: boolean;
     message: string;
-    severity: 'success' | 'error';
+    severity: 'success' | 'error' | 'warning';
   }>({ open: false, message: '', severity: 'success' });
+  const [showExpirationDialog, setShowExpirationDialog] = useState(false);
 
   const {
     session,
@@ -29,6 +33,13 @@ const SessionView = () => {
     isLoading: isSessionLoading,
     error: sessionError
   } = useSessionData(sessionId || '');
+
+  const {
+    isExpired,
+    isExpirable,
+    showExpirationWarning,
+    remainingTime,
+  } = useSessionTimer(session?.id || '');
 
   const {
     data: filesData,
@@ -42,10 +53,31 @@ const SessionView = () => {
 
   const { mutate: sendMessage, isPending: isSending } = useSendMessage(session?.id || '');
 
+  // Show expiration warning notification
+  useEffect(() => {
+    if (showExpirationWarning) {
+      setNotification({
+        open: true,
+        // message: `Session will expire in ${remainingTime}`,
+        message: `Du har ${remainingTime} minutter tilbage med TutorMaster. Du kan fortælle ham, at du vil runde af, hvis du ikke allerede har gjort det.`,
+        severity: 'warning',
+      });
+    }
+  }, [showExpirationWarning]);
+
+  // Show expiration dialog when session expires
+  useEffect(() => {
+    if (isExpired) {
+      setShowExpirationDialog(true);
+    }
+  }, [isExpired]);
+
   // Combine server messages with local optimistic updates
   const allMessages = [...serverMessages, ...localMessages];
 
   const handleSendMessage = (content: string) => {
+    if (isExpired) return;
+
     const optimisticMessage: ChatMessage = {
       id: `temp-${Date.now()}`,
       session_id: session?.id || '',
@@ -133,11 +165,16 @@ const SessionView = () => {
         <Box sx={{ mb: 2 }}>
           <BackButton to="/topics" toText='Topics' />
         </Box>
-        <SessionHeader
-          session={session}
-          onRestartSuccess={handleRestartSuccess}
-          onRestartError={handleRestartError}
-        />
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <SessionHeader 
+            session={session}
+            onRestartSuccess={handleRestartSuccess}
+            onRestartError={handleRestartError}
+            isExpired={isExpired}
+            isExpirable={isExpirable}
+          />
+          <SessionTimer remainingTime={remainingTime} isExpired={isExpired} />
+        </Box>
         <TopicInfo
           title={topic.title}
           description={topic.description}
@@ -151,13 +188,17 @@ const SessionView = () => {
         />
         <MessageInput
           onSendMessage={handleSendMessage}
-          disabled={isSending}
+          disabled={isSending || isExpired}
         />
         <Notification
           open={notification.open}
           message={notification.message}
           severity={notification.severity}
           onClose={() => setNotification({ ...notification, open: false })}
+        />
+        <ExpirationDialog
+          open={showExpirationDialog}
+          onClose={() => setShowExpirationDialog(false)}
         />
       </Container>
     </Box>

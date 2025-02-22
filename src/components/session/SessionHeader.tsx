@@ -12,9 +12,11 @@ interface SessionHeaderProps {
   session: Session;
   onRestartSuccess?: () => void;
   onRestartError?: (error: Error) => void;
+  isExpired?: boolean;
+  isExpirable?: boolean;
 }
 
-const SessionHeader = ({ session, onRestartSuccess, onRestartError }: SessionHeaderProps) => {
+const SessionHeader = ({ session, onRestartSuccess, onRestartError, isExpired = false, isExpirable = true }: SessionHeaderProps) => {
   const theme = useTheme();
   const { restartSession } = useSessionManagement();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -88,7 +90,7 @@ const SessionHeader = ({ session, onRestartSuccess, onRestartError }: SessionHea
             size="small"
             startIcon={<RefreshCw size={16} />}
             onClick={() => setIsConfirmOpen(true)}
-            disabled={restartSession.isPending}
+            disabled={restartSession.isPending || isExpired || isExpirable}
           >
             Restart Session
           </Button>
