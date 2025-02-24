@@ -38,16 +38,17 @@ export const useSessionTimer = (sessionId: string) => {
       }
 
       // Show warning at specific time thresholds
-      const shouldShowWarning = (
-        (data.remaining_seconds <= 300 && data.remaining_seconds > 290) || // 5 minutes
-        (data.remaining_seconds <= 120 && data.remaining_seconds > 110)    // 2 minutes
-      );
+    //   const shouldShowWarning = (
+    //     (data.remaining_seconds <= 300 && data.remaining_seconds > 290) || // 5 minutes
+    //     (data.remaining_seconds <= 120 && data.remaining_seconds > 110)    // 2 minutes
+    //   );
+      const shouldShowWarning = data.remaining_seconds <= 300 && data.remaining_seconds > 290;
 
       if (shouldShowWarning && (!lastWarningTime || Date.now() - lastWarningTime > 10000)) {
         setShowExpirationWarning(true);
         setLastWarningTime(Date.now());
-        // Hide warning after 5 seconds
-        setTimeout(() => setShowExpirationWarning(false), 5000);
+        // Hide warning after 10 seconds
+        setTimeout(() => setShowExpirationWarning(false), 10000);
       }
     }
   }, [data, lastWarningTime]);

@@ -59,7 +59,7 @@ const SessionView = () => {
       setNotification({
         open: true,
         // message: `Session will expire in ${remainingTime}`,
-        message: `Du har ${remainingTime} minutter tilbage med TutorMaster. Du kan fortælle ham, at du vil runde af, hvis du ikke allerede har gjort det.`,
+        message: `Du har 5 minutter tilbage med TutorMaster. Du kan fortælle ham, at du vil runde af, hvis du ikke allerede har gjort det.`,
         severity: 'warning',
       });
     }
