@@ -1,20 +1,17 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api';
 import { User } from '../types/auth';
+import { useAuthStore } from '../stores/authStore';
 
 export const useTheme = () => {
   const queryClient = useQueryClient();
-
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: async () => {
-      const { data } = await api.get<User>('/api/v1/users/me');
-      return data;
-    },
-  });
+  const { user, isAuthenticated } = useAuthStore();
 
   const { mutate: updateTheme } = useMutation({
     mutationFn: async (mode: 'light' | 'dark') => {
+      if (!isAuthenticated) return;
+      
       await api.put('/api/v1/users/me/preferences', {
         theme: mode,
       });
@@ -50,6 +47,17 @@ export const useTheme = () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
+
+  useEffect(() => {
+    // Only attempt to set theme if user is authenticated
+    if (!isAuthenticated) return;
+    
+    // Theme setting logic here
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const userTheme = user?.preferences?.theme || (prefersDark ? 'dark' : 'light');
+    
+    document.documentElement.setAttribute('data-theme', userTheme);
+  }, [user, isAuthenticated]);
 
   return {
     mode: user?.preferences?.theme || 'light',

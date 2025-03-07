@@ -7,7 +7,7 @@ import { LoginRequest, RegisterRequest, AuthResponse, User } from '../types/auth
 
 export const useLogin = () => {
   const navigate = useNavigate();
-  const { setTokens, setUser } = useAuthStore();
+  const { login, fetchUserData } = useAuthStore();
 
   return useMutation({
     mutationFn: async (credentials: LoginRequest) => {
@@ -16,33 +16,30 @@ export const useLogin = () => {
         formData.append('username', credentials.username);
         formData.append('password', credentials.password);
 
-        const { data: authData } = await api.post<AuthResponse>('/api/v1/auth/login', formData, {
+        const { data } = await api.post<AuthResponse>('/api/v1/auth/login', formData, {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
         });
-
-        setTokens(authData.access_token, authData.refresh_token);
-
-        const { data: userData } = await api.get<User>('/api/v1/users/me');
-        return { auth: authData, user: userData };
+        
+        if (!data.access_token || !data.refresh_token) {
+          throw new Error('Invalid response from server');
+        }
+        
+        return data;
       } catch (error) {
         if (axios.isAxiosError(error)) {
           if (error.response?.status === 401) {
             throw new Error('Invalid email or password');
           }
-          throw new Error(error.response?.data?.message || 'Login failed');
+          throw new Error(error.response?.data?.detail || 'Login failed');
         }
         throw new Error('An unexpected error occurred');
       }
     },
-    onSuccess: ({ auth, user }) => {
-      setUser({
-        id: user.id,
-        email: user.email,
-        fullName: user.full_name,
-        role: user.role,
-      });
+    onSuccess: async (data) => {
+      login(data.access_token, data.refresh_token);
+      await fetchUserData();
       navigate('/');
     },
   });

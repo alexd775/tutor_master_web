@@ -6,16 +6,19 @@ import FormTextField from '../common/Form/FormTextField';
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { mutate: login, isError, error } = useLogin();
+  const { mutate: login, isPending, error, isError } = useLogin();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login({ username: email, password });
+    login({ 
+      username: email,
+      password 
+    });
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      {isError && <Alert severity="error" sx={{ mb: 2 }}>{error?.message}</Alert>}
+      {isError && <Alert severity="error" sx={{ mb: 2 }}>{error.message}</Alert>}
       <FormTextField
         label="Email"
         type="email"
@@ -36,6 +39,7 @@ const LoginForm = () => {
         variant="contained"
         size="large"
         sx={{ mt: 2 }}
+        disabled={isPending}
       >
         Login
       </Button>
