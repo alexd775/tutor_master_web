@@ -1,63 +1,73 @@
 import { useEffect } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import api from '../lib/api';
-import { User } from '../types/auth';
 import { useAuthStore } from '../stores/authStore';
 
 export const useTheme = () => {
-  const queryClient = useQueryClient();
   const { user, isAuthenticated } = useAuthStore();
-
+  
   const { mutate: updateTheme } = useMutation({
     mutationFn: async (mode: 'light' | 'dark') => {
       if (!isAuthenticated) return;
       
-      await api.put('/api/v1/users/me/preferences', {
+      const response = await api.put('/api/v1/users/me/preferences', {
         theme: mode,
       });
+      return response.data;
     },
     onMutate: async (newMode) => {
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['user'] });
-
-      // Snapshot the previous value
-      const previousUser = queryClient.getQueryData<User>(['user']);
-
-      // Optimistically update to the new value
-      if (previousUser) {
-        queryClient.setQueryData<User>(['user'], {
-          ...previousUser,
-          preferences: {
-            ...previousUser.preferences,
-            theme: newMode
+      // Apply theme change immediately for better UX
+      document.documentElement.setAttribute('data-theme', newMode);
+      
+      // Use the setState method to properly update the store
+      const state = useAuthStore.getState();
+      if (state.user) {
+        useAuthStore.setState({
+          user: {
+            ...state.user,
+            preferences: {
+              ...state.user.preferences,
+              theme: newMode
+            }
           }
         });
       }
-
-      return { previousUser };
+      
+      return { previousMode: user?.preferences?.theme || 'light' };
     },
-    onError: (err, newMode, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
-      if (context?.previousUser) {
-        queryClient.setQueryData(['user'], context.previousUser);
+    onError: (_, __, context) => {
+      // Revert theme if mutation fails
+      if (context?.previousMode) {
+        document.documentElement.setAttribute('data-theme', context.previousMode);
       }
     },
-    onSettled: () => {
-      // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-    },
+    onSuccess: (data) => {
+      // Update auth store with response data using setState
+      const state = useAuthStore.getState();
+      if (state.user) {
+        useAuthStore.setState({
+          user: {
+            ...state.user,
+            preferences: {
+              ...state.user.preferences,
+              ...data
+            }
+          }
+        });
+      }
+    }
   });
 
+  // Set initial theme on component mount
   useEffect(() => {
-    // Only attempt to set theme if user is authenticated
-    if (!isAuthenticated) return;
-    
-    // Theme setting logic here
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const userTheme = user?.preferences?.theme || (prefersDark ? 'dark' : 'light');
-    
-    document.documentElement.setAttribute('data-theme', userTheme);
-  }, [user, isAuthenticated]);
+    if (isAuthenticated && user?.preferences?.theme) {
+      document.documentElement.setAttribute('data-theme', user.preferences.theme);
+    } else {
+      // Default to system preference if no user preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    }
+  }, [user?.preferences?.theme, isAuthenticated]);
 
   return {
     mode: user?.preferences?.theme || 'light',
