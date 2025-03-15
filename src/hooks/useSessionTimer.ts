@@ -13,13 +13,13 @@ export const useSessionTimer = (sessionId: string) => {
   const [lastWarningTime, setLastWarningTime] = useState<number | null>(null);
   const [isExpirable, setIsExpirable] = useState<boolean>(true);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['session-time', sessionId],
     queryFn: async () => {
       const { data } = await api.get<SessionTimeResponse>(`/api/v1/sessions/${sessionId}/time`);
       return data;
     },
-    refetchInterval: isExpired || !isExpirable ? false : 10000, // Check every 10 seconds if not expired and expirable
+    refetchInterval: isExpired || !isExpirable ? false : 30000, // Check every 10 seconds if not expired and expirable
     enabled: !!sessionId && !isExpired && isExpirable,
   });
 
@@ -42,16 +42,21 @@ export const useSessionTimer = (sessionId: string) => {
     //     (data.remaining_seconds <= 300 && data.remaining_seconds > 290) || // 5 minutes
     //     (data.remaining_seconds <= 120 && data.remaining_seconds > 110)    // 2 minutes
     //   );
-      const shouldShowWarning = data.remaining_seconds <= 300 && data.remaining_seconds > 290;
-
-      if (shouldShowWarning && (!lastWarningTime || Date.now() - lastWarningTime > 10000)) {
+      const shouldShowWarning = data.remaining_seconds <= 300+10 && data.remaining_seconds > 300-20;
+      if (shouldShowWarning && (!lastWarningTime || Date.now() - lastWarningTime > 30000)) {
         setShowExpirationWarning(true);
         setLastWarningTime(Date.now());
-        // Hide warning after 10 seconds
         setTimeout(() => setShowExpirationWarning(false), 10000);
       }
     }
   }, [data, lastWarningTime]);
+
+  // Reset expired state when refetching
+  useEffect(() => {
+    if (data?.is_valid) {
+      setIsExpired(false);
+    }
+  }, [data]);
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -74,5 +79,6 @@ export const useSessionTimer = (sessionId: string) => {
     showExpirationWarning,
     remainingTime: data?.remaining_seconds ? formatTime(data.remaining_seconds) : null,
     remainingSeconds: data?.remaining_seconds,
+    refetch,
   };
 };

@@ -1,141 +1,93 @@
 import { useEffect, useRef } from 'react';
-import { Box, Paper, useTheme, CircularProgress } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { ChatMessage } from '../../types/chat';
+import { Box, Paper, CircularProgress } from '@mui/material';
+import ChatMessage from './ChatMessage';
+import { ChatMessage as ChatMessageType } from '../../types/chat';
 
 interface ChatWindowProps {
-  messages: ChatMessage[];
+  messages: ChatMessageType[];
   isLoading?: boolean;
 }
 
 const ChatWindow = ({ messages, isLoading }: ChatWindowProps) => {
-  const theme = useTheme();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const prevMessagesLengthRef = useRef<number>(messages.length);
+  
+  // Auto-scroll to bottom only when new messages are added
   useEffect(() => {
-    scrollToBottom();
+    const isNewMessage = messages.length > prevMessagesLengthRef.current;
+    prevMessagesLengthRef.current = messages.length;
+    
+    if (isNewMessage && messagesEndRef.current && chatContainerRef.current) {
+      // Scroll to bottom only for new messages
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages]);
-
+  
   return (
     <Paper
+      elevation={0}
       sx={{
         height: '60vh',
-        overflow: 'auto',
-        p: 2,
-        bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
+        mb: 2,
+        border: '1px solid',
+        borderColor: 'divider',
         borderRadius: 2,
-        boxShadow: theme.palette.mode === 'dark'
-          ? '0 4px 6px -1px rgba(0, 0, 0, 0.2)'
-          : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-        scrollBehavior: 'smooth',
-        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
-      {messages.map((message) => message.role === 'system' ? null : (
-        <Box
-          key={message.id}
-          sx={{
-            mb: 2,
-            ml: message.role === 'user' ? 'auto' : 0,
-            mr: message.role === 'assistant' ? 'auto' : 0,
-            maxWidth: '70%',
-          }}
-        >
+      <Box
+        ref={chatContainerRef}
+        sx={{
+          p: 2,
+          overflowY: 'auto',
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+      >
+        {messages.map((message) => (
+          <ChatMessage
+            key={message.id}
+            message={message}
+            // Don't show loading for user messages
+            isLoading={false}
+          />
+        ))}
+        
+        {/* Show typing indicator when waiting for response */}
+        {isLoading && (
           <Box
             sx={{
-              bgcolor: message.role === 'user'
-                ? 'primary.main'
-                : theme.palette.mode === 'dark' ? '#374151' : 'grey.100',
-              color: message.role === 'user'
-                ? 'white'
-                : theme.palette.text.primary,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
               p: 2,
               borderRadius: 2,
-              '& p': {
-                m: 0,
-                '&:not(:last-child)': {
-                  mb: 1,
-                },
-              },
-              '& a': {
-                color: message.role === 'user'
-                  ? 'inherit'
-                  : 'primary.main',
-                textDecoration: 'underline',
-              },
-              '& code': {
-                bgcolor: theme.palette.mode === 'dark'
-                  ? 'rgba(0, 0, 0, 0.2)'
-                  : 'rgba(0, 0, 0, 0.05)',
-                p: 0.5,
-                borderRadius: 1,
-                fontFamily: 'monospace',
-              },
-              '& pre': {
-                bgcolor: theme.palette.mode === 'dark'
-                  ? 'rgba(0, 0, 0, 0.2)'
-                  : 'rgba(0, 0, 0, 0.05)',
-                p: 1,
-                borderRadius: 1,
-                overflow: 'auto',
-                '& code': {
-                  bgcolor: 'transparent',
-                  p: 0,
-                },
-              },
-              '& ul, & ol': {
-                pl: 3,
-                mb: 1,
-              },
-              '& li': {
-                mb: 0.5,
-              },
-              '& blockquote': {
-                borderLeft: `4px solid ${theme.palette.divider}`,
-                pl: 2,
-                ml: 0,
-                mr: 0,
-                my: 1,
-              },
+              bgcolor: (theme) => 
+                theme.palette.mode === 'dark' ? '#374151' : 'grey.100',
+              alignSelf: 'flex-start',
+              maxWidth: '70%',
             }}
           >
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              components={{
-                // Override default link behavior to open in new tab
-                a: ({ node, ...props }) => (
-                  <a target="_blank" rel="noopener noreferrer" {...props} />
-                ),
+            <CircularProgress size={16} />
+            <Box
+              component="span"
+              sx={{
+                fontSize: '0.875rem',
+                color: 'text.secondary',
               }}
             >
-              {message.content}
-            </ReactMarkdown>
+              Tutor is typing...
+            </Box>
           </Box>
-        </Box>
-      ))}
-      {isLoading && (
-        <Box
-          sx={{
-            position: 'sticky',
-            bottom: 0,
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            py: 2,
-            bgcolor: theme.palette.mode === 'dark'
-              ? 'rgba(31, 41, 55, 0.8)'
-              : 'rgba(255, 255, 255, 0.8)',
-          }}
-        >
-          <CircularProgress size={24} />
-        </Box>
-      )}
-      <div ref={messagesEndRef} />
+        )}
+        
+        <div ref={messagesEndRef} />
+      </Box>
     </Paper>
   );
 };

@@ -17,7 +17,7 @@ import { useSessionTimer } from '../../hooks/useSessionTimer';
 import { ChatMessage } from '../../types/chat';
 
 const SessionView = () => {
-  const { sessionId } = useParams();
+  const { sessionId } = useParams<{ sessionId: string }>();
   const theme = useTheme();
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>([]);
   const [notification, setNotification] = useState<{
@@ -31,14 +31,15 @@ const SessionView = () => {
     session,
     topic,
     isLoading: isSessionLoading,
-    error: sessionError
+    error: sessionError,
+    refetch: refetchSession
   } = useSessionData(sessionId || '');
 
   const {
     isExpired,
     isExpirable,
     showExpirationWarning,
-    remainingTime,
+    refetch: refetchTimer
   } = useSessionTimer(session?.id || '');
 
   const {
@@ -86,6 +87,9 @@ const SessionView = () => {
       created_at: new Date().toISOString(),
     };
 
+    // Save current active element to restore focus later
+    const activeElement = document.activeElement;
+
     setLocalMessages(prev => [...prev, optimisticMessage]);
 
     sendMessage(
@@ -93,9 +97,23 @@ const SessionView = () => {
       {
         onSuccess: () => {
           setLocalMessages([]);
+          
+          // Restore focus to the previously active element
+          if (activeElement && activeElement instanceof HTMLElement) {
+            setTimeout(() => {
+              activeElement.focus();
+            }, 0);
+          }
         },
         onError: () => {
           setLocalMessages(prev => prev.filter(msg => msg.id !== optimisticMessage.id));
+          
+          // Restore focus on error too
+          if (activeElement && activeElement instanceof HTMLElement) {
+            setTimeout(() => {
+              activeElement.focus();
+            }, 0);
+          }
         },
       }
     );
@@ -107,6 +125,10 @@ const SessionView = () => {
       message: 'Session restarted successfully',
       severity: 'success',
     });
+    
+    // Refetch both session data and timer data
+    refetchSession();
+    refetchTimer();
   };
 
   const handleRestartError = (error: Error) => {
@@ -173,7 +195,7 @@ const SessionView = () => {
             isExpired={isExpired}
             isExpirable={isExpirable}
           />
-          <SessionTimer remainingTime={remainingTime} isExpired={isExpired} />
+          {session && <SessionTimer sessionId={session.id} />}
         </Box>
         <TopicInfo
           title={topic.title}
@@ -195,6 +217,7 @@ const SessionView = () => {
           message={notification.message}
           severity={notification.severity}
           onClose={() => setNotification({ ...notification, open: false })}
+          duration={10000}
         />
         <ExpirationDialog
           open={showExpirationDialog}

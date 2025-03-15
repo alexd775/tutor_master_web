@@ -15,7 +15,7 @@ export const useExperimentLogin = ({ onSuccess, onError }: {
   onSuccess?: () => void;
   onError?: (error: any) => void;
 }) => {
-  const { setTokens } = useAuthStore();
+  const { login } = useAuthStore();
 
   return useMutation({
     mutationFn: async (data: ExperimentLoginRequest) => {
@@ -32,7 +32,7 @@ export const useExperimentLogin = ({ onSuccess, onError }: {
       return response;
     },
     onSuccess: (data) => {
-      setTokens(data.access_token, data.refresh_token);
+      login(data.access_token, data.refresh_token);
       onSuccess?.();
     },
     onError,

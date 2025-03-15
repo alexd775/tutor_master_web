@@ -27,5 +27,6 @@ export const useSessionData = (topicId: string) => {
         topic,
         isLoading: sessionQuery.isLoading || topicQuery.isLoading,
         error: sessionQuery.error || topicQuery.error,
+        refetch: sessionQuery.refetch || topicQuery.refetch,
     };
 };

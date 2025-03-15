@@ -1,5 +1,5 @@
-import { useState, KeyboardEvent } from 'react';
-import { Paper, InputBase, IconButton, useTheme } from '@mui/material';
+import { useState, useRef, useEffect } from 'react';
+import { Box, TextField, Button, Paper } from '@mui/material';
 import { Send } from 'lucide-react';
 
 interface MessageInputProps {
@@ -9,28 +9,40 @@ interface MessageInputProps {
 
 const MessageInput = ({ onSendMessage, disabled }: MessageInputProps) => {
   const [message, setMessage] = useState('');
-  const theme = useTheme();
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const shouldFocusRef = useRef(false);
+  
+  // Focus input on component mount
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+  
+  // Handle focus after state updates
+  useEffect(() => {
+    if (shouldFocusRef.current && inputRef.current) {
+      inputRef.current.focus();
+      shouldFocusRef.current = false;
+    }
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
-      onSendMessage(message.trim());
+    
+    if (message.trim() && !disabled) {
+      // Set flag to focus after state update
+      shouldFocusRef.current = true;
+      
+      onSendMessage(message);
       setMessage('');
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter') {
-      if (e.shiftKey) {
-        // Allow new line with Shift+Enter
-        return;
-      }
-      // Send message with just Enter
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (message.trim()) {
-        onSendMessage(message.trim());
-        setMessage('');
-      }
+      handleSubmit(e);
     }
   };
 
@@ -38,48 +50,46 @@ const MessageInput = ({ onSendMessage, disabled }: MessageInputProps) => {
     <Paper
       component="form"
       onSubmit={handleSubmit}
+      elevation={0}
       sx={{
-        p: '2px 4px',
         display: 'flex',
-        alignItems: 'center',
-        mt: 2,
+        alignItems: 'flex-end',
+        p: 2,
+        gap: 1,
+        border: '1px solid',
+        borderColor: 'divider',
         borderRadius: 2,
-        bgcolor: theme.palette.mode === 'dark' ? '#1f2937' : '#ffffff',
-        boxShadow: theme.palette.mode === 'dark'
-          ? '0 2px 4px -1px rgba(0, 0, 0, 0.2)'
-          : '0 2px 4px -1px rgba(0, 0, 0, 0.05)',
       }}
     >
-      <InputBase
-        sx={{
-          ml: 1,
-          flex: 1,
-          color: theme.palette.text.primary,
-          '& .MuiInputBase-input': {
-            '&::placeholder': {
-              color: theme.palette.text.secondary,
-              opacity: 1,
-            },
-          },
-        }}
+      <TextField
+        inputRef={inputRef}
+        fullWidth
+        multiline
+        maxRows={4}
         placeholder="Type your message... (Shift+Enter for new line)"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         onKeyDown={handleKeyDown}
-        multiline
-        maxRows={4}
         disabled={disabled}
-      />
-      <IconButton
-        type="submit"
+        variant="outlined"
         sx={{
-          p: '10px',
-          color: theme.palette.mode === 'dark' ? theme.palette.primary.light : theme.palette.primary.main,
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 2,
+          },
         }}
-        disabled={disabled || !message.trim()}
+      />
+      <Button
+        type="submit"
+        variant="contained"
+        disabled={!message.trim() || disabled}
+        sx={{ 
+          borderRadius: 2,
+          minWidth: 'auto',
+          p: 1.5,
+        }}
       >
-        <Send />
-      </IconButton>
+        <Send size={20} />
+      </Button>
     </Paper>
   );
 };

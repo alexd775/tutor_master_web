@@ -111,6 +111,42 @@ const ExperimentLogin = () => {
     );
   };
 
+  const renderExperimentPrivacy = () => {
+    if (!selectedExperiment) return null;
+
+    return (
+      <Box sx={{ 
+        mb: 4, 
+        textAlign: 'left',
+        p: 3,
+        bgcolor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+        borderRadius: 2,
+        border: '1px solid',
+        borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+      }}>
+        <Typography variant="h6" gutterBottom color="primary">
+          Privacy Policy
+        </Typography>
+        {/* <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          some text here...
+        </Typography> */}
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          By participating in this experiment, you agree to our{' '}
+          <Link
+            href={`${window.location.origin}/privacy_policy.pdf`}
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ color: theme.palette.primary.main }}
+          >
+            privacy policy
+          </Link>
+          . Please read it carefully before proceeding.
+        </Typography>
+      </Box>
+    );
+  };
+
+
   if (isLoading) {
     return (
       <Box
@@ -224,6 +260,7 @@ const ExperimentLogin = () => {
         )}
 
         {renderExperimentDetails()}
+        {renderExperimentPrivacy()}
 
         <form onSubmit={handleSubmit}>
           <TextField
@@ -254,7 +291,7 @@ const ExperimentLogin = () => {
               </Alert>
             </>
           )}
-
+          {/* 
           <TextField
             label="Email (Optional)"
             type="email"
@@ -269,7 +306,7 @@ const ExperimentLogin = () => {
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             fullWidth
             margin="normal"
-          />
+          /> */}
 
           <Button
             type="submit"

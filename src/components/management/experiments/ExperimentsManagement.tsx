@@ -220,6 +220,9 @@ const ExperimentsManagement = () => {
                     <Typography variant="body2">
                       Code Type: {experiment.code_single_use ? 'Single-use' : 'Reusable'}
                     </Typography>
+                    <Typography variant="body2">
+                      id: {experiment.id}
+                    </Typography>
                   </Box>
                 </CardContent>
               </Card>

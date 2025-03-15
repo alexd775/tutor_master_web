@@ -1,16 +1,17 @@
 import { Box, Typography, useTheme } from '@mui/material';
 import { Clock } from 'lucide-react';
+import { useSessionTimer } from '../../hooks/useSessionTimer';
 
 interface SessionTimerProps {
-  remainingTime: string | null;
-  isExpired: boolean;
+  sessionId: string;
 }
 
-const SessionTimer = ({ remainingTime, isExpired }: SessionTimerProps) => {
+const SessionTimer = ({ sessionId }: SessionTimerProps) => {
+  const { isExpired, isExpirable, remainingTime } = useSessionTimer(sessionId);
   const theme = useTheme();
 
-  if (isExpired || !remainingTime) return null;
-
+  if (!isExpirable || !remainingTime) return null;
+  
   return (
     <Box
       sx={{
@@ -22,6 +23,7 @@ const SessionTimer = ({ remainingTime, isExpired }: SessionTimerProps) => {
         px: 2,
         py: 1,
         borderRadius: 2,
+        mb: 2,
       }}
     >
       <Clock size={16} />
@@ -32,4 +34,4 @@ const SessionTimer = ({ remainingTime, isExpired }: SessionTimerProps) => {
   );
 };
 
-export default SessionTimer
+export default SessionTimer;

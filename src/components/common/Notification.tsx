@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { Snackbar, Alert, AlertColor } from '@mui/material';
 
 interface NotificationProps {
@@ -5,13 +6,24 @@ interface NotificationProps {
     message: string;
     severity: AlertColor;
     onClose: () => void;
+    duration?: number;
 }
 
-const Notification = ({ open, message, severity, onClose }: NotificationProps) => {
+const Notification: React.FC<NotificationProps> = ({ open, message, severity, onClose, duration = 4000 }) => {
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            onClose();
+        }, duration);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [onClose, duration]);
+
     return (
         <Snackbar
             open={open}
-            autoHideDuration={4000}
+            autoHideDuration={duration}
             onClose={onClose}
             anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
             sx={{
