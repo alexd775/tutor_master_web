@@ -20,8 +20,9 @@ import {
           <Typography>
             {/* Thank you for participating! Your session time has expired.
             You can start a new topic to continue learning. */}
-            Du er nu færdig med denne del af eksperimentet. 
-            Det er tid til et par minutters pause, før du fortsætter med posttest - tag en småkage!
+            Du er nu færdig med at interagere med chatbotten. 
+            Du må gerne gå tilbage til spørgeskemaet, og tryk på "næste" for at fortsætte til posttesten. 
+            Hvis du er færdig tidligt, skal du vente på, at resten bliver færdige. 
           </Typography>
         </DialogContent>
         <DialogActions>
